@@ -253,8 +253,8 @@
    prompt in the app" workflow while keeping real keys out of GitHub
    and out of push protection's way.
    ===================================================================== */
-const GEMINI_API_KEY = (window.APP_CONFIG && window.APP_CONFIG.GEMINI_API_KEY) || '';
-const DEEPGRAM_API_KEY = (window.APP_CONFIG && window.APP_CONFIG.DEEPGRAM_API_KEY) || '';
+const GEMINI_API_KEY = (process.env.GEMINI_API_KEY) || '';
+const DEEPGRAM_API_KEY = (process.env.DEEPGRAM_API_KEY) || '';
 
 /* ============================= DATA ============================= */
 const CATEGORIES = {
