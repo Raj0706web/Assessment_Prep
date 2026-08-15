@@ -678,7 +678,6 @@ function startDeepgramTranscription(mediaRecorder, liveBox, statusTextEl, mimeTy
   state.deepgramFinalTranscript = '';
   state.deepgramInterimTranscript = '';
 
-  const isOpus = mimeType.indexOf('opus') !== -1;
   const params = new URLSearchParams({
     model: 'nova-2',
     language: 'en',
@@ -687,14 +686,16 @@ function startDeepgramTranscription(mediaRecorder, liveBox, statusTextEl, mimeTy
     punctuate: 'true',
     endpointing: '300'
   });
-  if(mimeType.indexOf('webm') !== -1) params.set('container', 'webm');
-  if(isOpus){
-    // Chrome/Edge/Firefox's Opus encoder for getUserMedia audio is 48kHz mono.
-    // Being explicit here avoids Deepgram guessing wrong and rejecting the stream.
-    params.set('encoding', 'opus');
-    params.set('sample_rate', '48000');
-    params.set('channels', '1');
-  }
+  // IMPORTANT: our MediaRecorder output is WebM-containerized audio (the
+  // container header carries codec/sample-rate/channel info in-band).
+  // Deepgram's own docs are explicit: for containerized audio you must NOT
+  // also set `encoding`/`sample_rate`/`channels` — those are only for raw,
+  // headerless PCM/Opus streams. Setting both together (as this code used
+  // to) makes Deepgram try to parse WebM-wrapped bytes as raw audio, which
+  // fails to decode silently: the socket connects, chunks get accepted,
+  // but no Results/Error message ever comes back. Omitting these lets
+  // Deepgram read the format straight from the WebM container header.
+  dgLog('Sending WebM-containerized audio — deliberately omitting encoding/sample_rate/channels per Deepgram docs.');
 
   const url = `wss://api.deepgram.com/v1/listen?${params.toString()}`;
   dgLog(`Connecting to Deepgram with params: ${params.toString()}`);
