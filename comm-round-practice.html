@@ -1,0 +1,1107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Communication Round Practice</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#F5F1E7;
+    --surface:#FFFFFF;
+    --surface-alt:#FBF7EC;
+    --border:#E2D8C0;
+    --ink:#202A2E;
+    --ink-soft:#5B6A6E;
+    --ink-faint:#94A0A2;
+    --primary:#24424A;
+    --primary-light:#DEE9E7;
+    --accent:#AD7F22;
+    --accent-soft:#F1E3BE;
+    --success:#4F7A5E;
+    --success-soft:#E1EBDE;
+    --warn:#9C4A3C;
+    --warn-soft:#F1DCD5;
+    --radius:14px;
+    --shadow: 0 1px 2px rgba(32,42,46,0.04), 0 8px 24px rgba(32,42,46,0.06);
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--bg);
+    background-image:
+      radial-gradient(circle at 1px 1px, rgba(32,42,46,0.05) 1px, transparent 0);
+    background-size: 22px 22px;
+    color:var(--ink);
+    font-family:'IBM Plex Sans', sans-serif;
+    min-height:100vh;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3,.display{font-family:'Fraunces', serif;}
+  .mono{font-family:'IBM Plex Mono', monospace;}
+  #app{max-width:1080px;margin:0 auto;padding:28px 20px 80px;}
+  a{color:inherit;}
+  button{font-family:inherit;cursor:pointer;}
+  button:focus-visible, [tabindex]:focus-visible, input:focus-visible, textarea:focus-visible{
+    outline:2px solid var(--primary); outline-offset:2px;
+  }
+
+  /* ---------- Top bar ---------- */
+  .topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:36px;}
+  .brand{display:flex;align-items:center;gap:12px;cursor:pointer;}
+  .brand-mark{width:38px;height:38px;border-radius:10px;background:var(--primary);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+  .brand-mark svg{width:20px;height:20px;stroke:var(--bg);}
+  .brand-text .eyebrow{font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-faint);font-weight:600;}
+  .brand-text h1{font-size:19px;margin:0;font-weight:600;line-height:1.1;}
+  .topbar-right{display:flex;align-items:center;gap:14px;}
+  .pill{
+    display:flex;align-items:center;gap:7px;
+    background:var(--surface);border:1px solid var(--border);
+    padding:7px 13px;border-radius:99px;font-size:13px;color:var(--ink-soft);
+    box-shadow:var(--shadow);
+  }
+  .pill b{color:var(--ink);font-weight:600;}
+  .link-btn{
+    background:none;border:none;color:var(--ink-soft);font-size:13px;
+    text-decoration:underline;text-underline-offset:3px;padding:4px;
+  }
+  .link-btn:hover{color:var(--ink);}
+
+  /* ---------- Buttons ---------- */
+  .btn{
+    display:inline-flex;align-items:center;justify-content:center;gap:8px;
+    border-radius:10px;border:1px solid transparent;
+    padding:12px 20px;font-size:14.5px;font-weight:600;
+    transition:transform .12s ease, box-shadow .12s ease, background .15s ease;
+  }
+  .btn:active{transform:translateY(1px);}
+  .btn-primary{background:var(--primary);color:#F5F1E7;}
+  .btn-primary:hover{box-shadow:0 6px 16px rgba(36,66,74,0.28);}
+  .btn-primary:disabled{opacity:.45;cursor:not-allowed;box-shadow:none;}
+  .btn-ghost{background:var(--surface);border-color:var(--border);color:var(--ink);}
+  .btn-ghost:hover{border-color:var(--primary);}
+  .btn-warn{background:var(--warn);color:#fff;}
+  .btn-block{width:100%;}
+  .btn-sm{padding:9px 15px;font-size:13.5px;}
+
+  /* ---------- Cards / surfaces ---------- */
+  .card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);}
+  .section-head{margin-bottom:18px;}
+  .section-head .eyebrow{font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:6px;display:block;}
+  .section-head h2{font-size:26px;margin:0 0 6px;font-weight:600;}
+  .section-head p{margin:0;color:var(--ink-soft);font-size:14.5px;max-width:600px;line-height:1.5;}
+
+  /* ---------- Setup screen ---------- */
+  .setup-wrap{min-height:78vh;display:flex;align-items:center;justify-content:center;}
+  .setup-card{max-width:480px;width:100%;padding:40px 36px;text-align:left;}
+  .setup-card .stamp{width:52px;height:52px;border-radius:50%;border:2px solid var(--primary);display:flex;align-items:center;justify-content:center;margin-bottom:20px;}
+  .setup-card .stamp svg{width:24px;height:24px;stroke:var(--primary);}
+  .setup-card h2{font-size:24px;margin:0 0 10px;}
+  .setup-card p{color:var(--ink-soft);font-size:14.5px;line-height:1.6;margin:0 0 22px;}
+  .field label{display:block;font-size:12.5px;font-weight:600;color:var(--ink-soft);margin-bottom:7px;text-transform:uppercase;letter-spacing:.04em;}
+  .field input, .field textarea{
+    width:100%;border:1px solid var(--border);border-radius:9px;padding:11px 13px;
+    font-family:'IBM Plex Mono', monospace;font-size:13.5px;background:var(--surface-alt);color:var(--ink);
+  }
+  .field textarea{font-family:'IBM Plex Sans',sans-serif;resize:vertical;min-height:90px;}
+  .field small{display:block;margin-top:8px;color:var(--ink-faint);font-size:12px;line-height:1.5;}
+  .setup-card .btn{margin-top:18px;}
+  .key-note{background:var(--accent-soft);border:1px solid #E4CE94;border-radius:9px;padding:11px 13px;font-size:12.5px;color:#6B5316;line-height:1.55;margin-top:16px;}
+
+  /* ---------- Dashboard ---------- */
+  .stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:34px;}
+  .stat-card{padding:18px 20px;}
+  .stat-card .label{font-size:11.5px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-faint);font-weight:600;margin-bottom:8px;}
+  .stat-card .value{font-family:'IBM Plex Mono',monospace;font-size:26px;font-weight:600;color:var(--primary);}
+  .stat-card .value.accent{color:var(--accent);}
+
+  .cat-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin-bottom:36px;}
+  .cat-card{padding:22px;display:flex;flex-direction:column;gap:12px;transition:border-color .15s ease, transform .12s ease;cursor:pointer;}
+  .cat-card:hover{border-color:var(--primary);transform:translateY(-2px);}
+  .cat-top{display:flex;align-items:flex-start;justify-content:space-between;}
+  .cat-icon{width:42px;height:42px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+  .cat-icon svg{width:21px;height:21px;}
+  .cat-card h3{font-size:18px;margin:0;font-weight:600;}
+  .cat-card p{margin:0;color:var(--ink-soft);font-size:13.5px;line-height:1.5;}
+  .cat-meta{display:flex;gap:14px;font-size:12px;color:var(--ink-faint);font-family:'IBM Plex Mono',monospace;margin-top:2px;}
+
+  .history-card{padding:22px 24px;}
+  .history-row{display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border);gap:12px;}
+  .history-row:last-child{border-bottom:none;}
+  .history-left{display:flex;align-items:center;gap:12px;min-width:0;}
+  .history-badge{
+    width:36px;height:36px;border-radius:50%;flex-shrink:0;
+    display:flex;align-items:center;justify-content:center;
+    font-family:'IBM Plex Mono',monospace;font-weight:600;font-size:13px;
+  }
+  .history-title{font-size:13.5px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:360px;}
+  .history-sub{font-size:12px;color:var(--ink-faint);}
+  .empty-state{padding:34px 20px;text-align:center;color:var(--ink-faint);font-size:13.5px;}
+
+  /* ---------- Test screen ---------- */
+  .test-grid{display:grid;grid-template-columns:1.3fr 1fr;gap:20px;align-items:start;}
+  .question-panel{padding:28px;}
+  .cat-tag{
+    display:inline-flex;align-items:center;gap:6px;font-size:11.5px;font-weight:700;
+    text-transform:uppercase;letter-spacing:.06em;padding:5px 11px;border-radius:99px;margin-bottom:16px;
+  }
+  .prompt-text{font-family:'Fraunces',serif;font-size:22px;line-height:1.45;font-weight:500;margin:0 0 18px;}
+  .instruction-box{background:var(--surface-alt);border:1px solid var(--border);border-radius:10px;padding:14px 16px;font-size:13px;color:var(--ink-soft);line-height:1.6;}
+  .reading-passage{
+    font-family:'Fraunces',serif;font-size:17px;line-height:1.75;color:var(--ink);
+    background:var(--surface-alt);border:1px solid var(--border);border-radius:10px;padding:18px 20px;margin-top:6px;
+  }
+  .transcript-box{margin-top:18px;}
+  .transcript-box .label{font-size:11.5px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-faint);font-weight:600;margin-bottom:8px;}
+  .transcript-live{
+    min-height:70px;max-height:160px;overflow-y:auto;background:var(--surface-alt);border:1px dashed var(--border);
+    border-radius:10px;padding:12px 14px;font-size:13.5px;line-height:1.6;color:var(--ink-soft);
+  }
+  .transcript-live.filled{color:var(--ink);border-style:solid;}
+
+  .control-panel{padding:28px;display:flex;flex-direction:column;align-items:center;gap:20px;}
+  .timer-wrap{position:relative;width:180px;height:180px;}
+  .timer-wrap svg{transform:rotate(-90deg);width:100%;height:100%;}
+  .timer-track{fill:none;stroke:var(--border);stroke-width:8;}
+  .timer-progress{fill:none;stroke:var(--primary);stroke-width:8;stroke-linecap:round;transition:stroke-dashoffset 1s linear, stroke .3s ease;}
+  .timer-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;}
+  .timer-center .t{font-family:'IBM Plex Mono',monospace;font-size:34px;font-weight:600;color:var(--ink);}
+  .timer-center .lbl{font-size:11px;color:var(--ink-faint);text-transform:uppercase;letter-spacing:.06em;margin-top:2px;}
+
+  .mic-btn{
+    width:76px;height:76px;border-radius:50%;border:none;background:var(--primary);
+    display:flex;align-items:center;justify-content:center;box-shadow:0 8px 20px rgba(36,66,74,0.3);
+    transition:transform .15s ease, background .2s ease;
+  }
+  .mic-btn svg{width:30px;height:30px;stroke:#F5F1E7;}
+  .mic-btn:hover{transform:scale(1.05);}
+  .mic-btn.recording{background:var(--warn);animation:pulse 1.6s infinite;}
+  .mic-btn:disabled{opacity:.4;cursor:not-allowed;animation:none;}
+  @keyframes pulse{
+    0%{box-shadow:0 0 0 0 rgba(156,74,60,0.45);}
+    70%{box-shadow:0 0 0 16px rgba(156,74,60,0);}
+    100%{box-shadow:0 0 0 0 rgba(156,74,60,0);}
+  }
+  .status-text{font-size:13px;color:var(--ink-soft);text-align:center;min-height:18px;}
+  .wave-row{display:flex;align-items:flex-end;gap:4px;height:28px;}
+  .wave-row .bar{width:4px;background:var(--warn);border-radius:2px;animation:wave 1s ease-in-out infinite;}
+  @keyframes wave{0%,100%{height:6px;}50%{height:26px;}}
+  .ready-overlay{
+    position:fixed;inset:0;background:rgba(32,42,46,0.88);display:flex;flex-direction:column;
+    align-items:center;justify-content:center;z-index:50;color:#F5F1E7;
+  }
+  .ready-overlay .num{font-family:'IBM Plex Mono',monospace;font-size:88px;font-weight:600;}
+  .ready-overlay .lbl{font-size:14px;text-transform:uppercase;letter-spacing:.08em;color:#C9D3D1;margin-top:6px;}
+
+  /* ---------- Results screen ---------- */
+  .results-grid{display:grid;grid-template-columns:1fr 1.4fr;gap:20px;align-items:start;}
+  .score-card{padding:32px 26px;display:flex;flex-direction:column;align-items:center;text-align:center;}
+  .score-stamp{
+    width:132px;height:132px;border-radius:50%;border:3px solid var(--primary);
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    transform:rotate(-4deg);margin-bottom:18px;position:relative;
+  }
+  .score-stamp .num{font-family:'IBM Plex Mono',monospace;font-size:44px;font-weight:600;line-height:1;color:var(--primary);}
+  .score-stamp .den{font-family:'IBM Plex Mono',monospace;font-size:13px;color:var(--ink-faint);margin-top:2px;}
+  .score-stamp::before,.score-stamp::after{content:"";position:absolute;border-radius:50%;border:1px dashed var(--border);}
+  .score-stamp::before{inset:-8px;}
+  .score-tag{font-size:12.5px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;padding:6px 14px;border-radius:99px;margin-bottom:6px;}
+  .breakdown{width:100%;text-align:left;margin-top:8px;}
+  .breakdown-row{margin-bottom:14px;}
+  .breakdown-row:last-child{margin-bottom:0;}
+  .breakdown-row .brow-top{display:flex;justify-content:space-between;font-size:12.5px;margin-bottom:6px;}
+  .breakdown-row .brow-top span:first-child{color:var(--ink-soft);font-weight:500;}
+  .breakdown-row .brow-top span:last-child{font-family:'IBM Plex Mono',monospace;font-weight:600;color:var(--ink);}
+  .bar-track{height:7px;background:var(--surface-alt);border:1px solid var(--border);border-radius:99px;overflow:hidden;}
+  .bar-fill{height:100%;background:var(--primary);border-radius:99px;transition:width .5s ease;}
+
+  .feedback-card{padding:26px 28px;}
+  .feedback-card h3{font-size:16px;margin:0 0 4px;display:flex;align-items:center;gap:8px;}
+  .feedback-card .fsub{font-size:12.5px;color:var(--ink-faint);margin-bottom:14px;}
+  .feedback-list{list-style:none;margin:0 0 22px;padding:0;}
+  .feedback-list li{display:flex;gap:10px;font-size:13.5px;line-height:1.55;padding:8px 0;border-bottom:1px solid var(--border);}
+  .feedback-list li:last-child{border-bottom:none;}
+  .feedback-list .dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;margin-top:6px;}
+  .divider-label{font-size:11.5px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-faint);font-weight:700;margin:18px 0 10px;}
+  .model-answer{background:var(--surface-alt);border-left:3px solid var(--accent);border-radius:0 8px 8px 0;padding:13px 16px;font-size:13.5px;line-height:1.6;color:var(--ink-soft);font-style:italic;}
+  .results-actions{display:flex;gap:10px;margin-top:24px;flex-wrap:wrap;}
+
+  .loading-wrap{min-height:40vh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;}
+  .spinner{width:34px;height:34px;border-radius:50%;border:3px solid var(--border);border-top-color:var(--primary);animation:spin .8s linear infinite;}
+  @keyframes spin{to{transform:rotate(360deg);}}
+  .loading-wrap p{color:var(--ink-soft);font-size:13.5px;}
+
+  .error-box{background:var(--warn-soft);border:1px solid #E3BBB0;color:#6E2E22;border-radius:10px;padding:13px 16px;font-size:13px;line-height:1.55;margin-top:14px;}
+
+  @media (max-width: 820px){
+    .stats-row{grid-template-columns:repeat(2,1fr);}
+    .cat-grid{grid-template-columns:1fr;}
+    .test-grid, .results-grid{grid-template-columns:1fr;}
+  }
+</style>
+</head>
+<body>
+<div id="app"></div>
+
+<script src="config.js"></script>
+<script>
+/* =====================================================================
+   API keys now live in config.js (a separate file next to this one,
+   NOT committed to git — see config.example.js for the template and
+   the .gitignore note). This keeps the "paste once, never see a key
+   prompt in the app" workflow while keeping real keys out of GitHub
+   and out of push protection's way.
+   ===================================================================== */
+const GEMINI_API_KEY = (window.APP_CONFIG && window.APP_CONFIG.GEMINI_API_KEY) || '';
+const DEEPGRAM_API_KEY = (window.APP_CONFIG && window.APP_CONFIG.DEEPGRAM_API_KEY) || '';
+
+/* ============================= DATA ============================= */
+const CATEGORIES = {
+  jam: {
+    key:'jam', label:'JAM Topics', short:'Just A Minute',
+    desc:'Speak fluently and coherently on a topic with no preparation time.',
+    duration:60, color:'#24424A', bg:'#DEE9E7',
+    icon:'<svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round"><path d="M12 15a3 3 0 0 0 3-3V6a3 3 0 0 0-6 0v6a3 3 0 0 0 3 3z"/><path d="M19 11v1a7 7 0 0 1-14 0v-1M12 19v3"/></svg>',
+    questions:[
+      "If you could choose any job in the world, what would it be and why? Explain the skills required and how you would prepare for it.",
+      "Describe a time you had to work under pressure. How did you handle it, and what did you learn?",
+      "Is social media doing more good than harm? Share your opinion with reasons.",
+      "What does leadership mean to you? Describe the qualities of a good leader.",
+      "Describe your favourite hobby and how it has shaped who you are today.",
+      "If you could change one thing about the education system, what would it be and why?",
+      "Talk about a person who has inspired you the most in your life.",
+      "Do you think artificial intelligence will create more jobs than it takes away? Explain your view."
+    ]
+  },
+  picture: {
+    key:'picture', label:'Picture Description', short:'Describe the Scene',
+    desc:'Observe the illustration and describe what is happening, who is involved, and what it might mean.',
+    duration:60, color:'#AD7F22', bg:'#F1E3BE',
+    icon:'<svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M21 16l-5.5-5.5L9 17"/></svg>',
+    questions:[
+      {prompt:"Describe what is happening in this office scene. What might each person be thinking or feeling?", svg:'office'},
+      {prompt:"Describe this family scene. What occasion could this be, and how would you describe the mood?", svg:'dinner'},
+      {prompt:"Describe this scene at a train station. What do you think happens next?", svg:'station'},
+      {prompt:"Describe this classroom scene. What is the teacher doing, and how do the students seem to feel?", svg:'classroom'}
+    ]
+  },
+  situation: {
+    key:'situation', label:'Situation Response', short:'Workplace Scenarios',
+    desc:'Respond verbally to a real workplace situation the way you would in person.',
+    duration:45, color:'#4F7A5E', bg:'#E1EBDE',
+    icon:'<svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>',
+    questions:[
+      "Your manager assigns you a task with a deadline you know is unrealistic. How would you respond to them, right now, out loud?",
+      "A teammate isn't contributing equally to a group project close to the deadline. What would you say to them directly?",
+      "You disagree with a decision your team lead made in a meeting. How would you voice your opinion respectfully?",
+      "A client is upset about a delayed delivery. How would you explain the situation and reassure them on a call?",
+      "A new colleague keeps interrupting you in meetings. How would you address this with them one-on-one?",
+      "You made a mistake that affected your team's output. How would you inform your manager about it?"
+    ]
+  },
+  reading: {
+    key:'reading', label:'Reading Aloud', short:'Pronunciation & Pace',
+    desc:'Read the given passage aloud clearly at a natural, steady pace.',
+    duration:45, color:'#9C4A3C', bg:'#F1DCD5',
+    icon:'<svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>',
+    questions:[
+      "Good communication is not just about speaking clearly, it is about listening with intention and responding with empathy. In a workplace, the ability to express an idea concisely often matters more than the idea itself. Professionals who read widely and practise speaking regularly tend to build this skill faster than those who rely on talent alone.",
+      "Every organisation depends on trust between its people. Trust is built slowly, through small consistent actions, and it can be lost quickly through a single careless decision. When a team member admits a mistake early, the damage is almost always smaller than when the truth comes out later.",
+      "The modern workplace rewards adaptability. Technologies change every few years, and the professionals who thrive are rarely the most naturally talented, but the ones most willing to learn something new and unfamiliar. Curiosity, more than raw skill, tends to decide who grows fastest in their career.",
+      "First impressions are formed within the first few seconds of a conversation, long before a single fact has been exchanged. Tone, posture and pace often communicate more confidence than the words themselves. This is why interviewers are trained to notice not just what a candidate says, but how they say it."
+    ]
+  },
+  story: {
+    key:'story', label:'Story Building', short:'Narrate with Given Words',
+    desc:'Build a short, coherent spoken story that naturally uses all the given words.',
+    duration:60, color:'#6B5316', bg:'#F1E3BE',
+    icon:'<svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>',
+    questions:[
+      "Narrate a short story that naturally uses these three words: currency, journey, umbrella.",
+      "Narrate a short story that naturally uses these three words: deadline, courage, lighthouse.",
+      "Narrate a short story that naturally uses these three words: stranger, festival, promise.",
+      "Narrate a short story that naturally uses these three words: rainfall, ticket, reunion.",
+      "Narrate a short story that naturally uses these three words: mirror, silence, opportunity."
+    ]
+  }
+};
+
+const SVG_SCENES = {
+  office: `<svg viewBox="0 0 400 260" xmlns="http://www.w3.org/2000/svg"><rect width="400" height="260" fill="#FBF7EC"/><rect x="20" y="180" width="360" height="10" fill="#E2D8C0"/><rect x="60" y="120" width="90" height="60" rx="4" fill="#DEE9E7" stroke="#24424A" stroke-width="2"/><rect x="250" y="110" width="100" height="70" rx="4" fill="#F1E3BE" stroke="#AD7F22" stroke-width="2"/><circle cx="105" cy="100" r="16" fill="#24424A"/><rect x="89" y="118" width="32" height="46" rx="8" fill="#24424A"/><circle cx="300" cy="92" r="16" fill="#9C4A3C"/><rect x="284" y="110" width="32" height="46" rx="8" fill="#9C4A3C"/><rect x="170" y="150" width="60" height="30" rx="3" fill="#fff" stroke="#E2D8C0" stroke-width="2"/><circle cx="200" cy="60" r="14" fill="#4F7A5E"/><rect x="184" y="78" width="32" height="46" rx="8" fill="#4F7A5E"/></svg>`,
+  dinner: `<svg viewBox="0 0 400 260" xmlns="http://www.w3.org/2000/svg"><rect width="400" height="260" fill="#FBF7EC"/><ellipse cx="200" cy="190" rx="150" ry="14" fill="#E2D8C0"/><rect x="90" y="140" width="220" height="14" rx="6" fill="#F1E3BE" stroke="#AD7F22" stroke-width="2"/><circle cx="140" cy="90" r="16" fill="#24424A"/><rect x="124" y="108" width="32" height="40" rx="8" fill="#24424A"/><circle cx="200" cy="80" r="16" fill="#9C4A3C"/><rect x="184" y="98" width="32" height="50" rx="8" fill="#9C4A3C"/><circle cx="260" cy="90" r="16" fill="#4F7A5E"/><rect x="244" y="108" width="32" height="40" rx="8" fill="#4F7A5E"/><circle cx="150" cy="140" r="8" fill="#fff" stroke="#E2D8C0" stroke-width="2"/><circle cx="200" cy="140" r="8" fill="#fff" stroke="#E2D8C0" stroke-width="2"/><circle cx="250" cy="140" r="8" fill="#fff" stroke="#E2D8C0" stroke-width="2"/></svg>`,
+  station: `<svg viewBox="0 0 400 260" xmlns="http://www.w3.org/2000/svg"><rect width="400" height="260" fill="#FBF7EC"/><rect x="0" y="170" width="400" height="8" fill="#94A0A2"/><rect x="0" y="190" width="400" height="6" fill="#5B6A6E"/><rect x="30" y="90" width="220" height="70" rx="4" fill="#DEE9E7" stroke="#24424A" stroke-width="2"/><rect x="40" y="105" width="30" height="30" fill="#fff" stroke="#E2D8C0" stroke-width="2"/><rect x="85" y="105" width="30" height="30" fill="#fff" stroke="#E2D8C0" stroke-width="2"/><circle cx="300" cy="140" r="14" fill="#9C4A3C"/><rect x="286" y="156" width="28" height="34" rx="7" fill="#9C4A3C"/><circle cx="340" cy="145" r="12" fill="#4F7A5E"/><rect x="328" y="159" width="24" height="30" rx="6" fill="#4F7A5E"/><rect x="335" y="180" width="14" height="10" fill="#AD7F22"/></svg>`,
+  classroom: `<svg viewBox="0 0 400 260" xmlns="http://www.w3.org/2000/svg"><rect width="400" height="260" fill="#FBF7EC"/><rect x="30" y="30" width="180" height="90" rx="4" fill="#fff" stroke="#24424A" stroke-width="2"/><rect x="46" y="46" width="70" height="8" fill="#94A0A2"/><rect x="46" y="62" width="110" height="8" fill="#94A0A2"/><rect x="46" y="78" width="90" height="8" fill="#94A0A2"/><circle cx="260" cy="90" r="15" fill="#24424A"/><rect x="244" y="108" width="32" height="46" rx="8" fill="#24424A"/><circle cx="120" cy="190" r="12" fill="#9C4A3C"/><rect x="108" y="204" width="24" height="30" rx="6" fill="#9C4A3C"/><circle cx="170" cy="190" r="12" fill="#4F7A5E"/><rect x="158" y="204" width="24" height="30" rx="6" fill="#4F7A5E"/><circle cx="220" cy="190" r="12" fill="#AD7F22"/><rect x="208" y="204" width="24" height="30" rx="6" fill="#AD7F22"/></svg>`
+};
+
+/* ============================= STATE ============================= */
+const KEY_READY = !!GEMINI_API_KEY && GEMINI_API_KEY.indexOf('PASTE_YOUR') === -1;
+const DEEPGRAM_READY = !!DEEPGRAM_API_KEY && DEEPGRAM_API_KEY.indexOf('PASTE_YOUR') === -1;
+const SPEECH_RECOGNITION_CTOR = window.SpeechRecognition || window.webkitSpeechRecognition;
+const SPEECH_SUPPORTED = DEEPGRAM_READY ? true : !!SPEECH_RECOGNITION_CTOR;
+
+const state = {
+  apiKey: GEMINI_API_KEY,
+  screen: KEY_READY ? 'dashboard' : 'key-missing',
+  currentCat: null,
+  currentQ: null,
+  currentQIndex: 0,
+  transcript: '',
+  audioURL: null,
+  duration: 60,
+  timeLeft: 60,
+  timerInterval: null,
+  mediaRecorder: null,
+  recognition: null,
+  deepgramSocket: null,
+  deepgramFinalTranscript: '',
+  deepgramInterimTranscript: '',
+  speechSupported: SPEECH_SUPPORTED,
+  isRecording: false,
+  attempts: [], // {id, catKey, question, transcript, score:{...}, ts}
+  lastResult: null,
+  loading: false,
+  loadError: ''
+};
+
+/* ============================= HELPERS ============================= */
+function el(html){ const d=document.createElement('div'); d.innerHTML=html.trim(); return d.firstChild; }
+function fmtTime(s){ const m=Math.floor(s/60); const sec=s%60; return `${m}:${sec.toString().padStart(2,'0')}`; }
+function scoreColor(v){ if(v>=8) return 'var(--success)'; if(v>=5) return 'var(--accent)'; return 'var(--warn)'; }
+function scoreSoft(v){ if(v>=8) return 'var(--success-soft)'; if(v>=5) return 'var(--accent-soft)'; return 'var(--warn-soft)'; }
+function avg(arr){ return arr.length ? (arr.reduce((a,b)=>a+b,0)/arr.length) : 0; }
+
+/* ============================= RENDER ROOT ============================= */
+function render(){
+  const app = document.getElementById('app');
+  app.innerHTML = '';
+  if(state.screen === 'key-missing'){ app.appendChild(renderKeyMissing()); return; }
+
+  app.appendChild(renderTopbar());
+  if(state.screen === 'dashboard') app.appendChild(renderDashboard());
+  if(state.screen === 'test') app.appendChild(renderTest());
+  if(state.screen === 'loading') app.appendChild(renderLoading());
+  if(state.screen === 'results') app.appendChild(renderResults());
+  if(state.screen === 'history') app.appendChild(renderHistory());
+}
+
+/* ============================= TOPBAR ============================= */
+function renderTopbar(){
+  const bar = el(`<div class="topbar">
+    <div class="brand" id="brandHome">
+      <div class="brand-mark"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15a3 3 0 0 0 3-3V6a3 3 0 0 0-6 0v6a3 3 0 0 0 3 3z"/><path d="M19 11v1a7 7 0 0 1-14 0v-1M12 19v3"/></svg></div>
+      <div class="brand-text">
+        <span class="eyebrow">Assessment Prep</span>
+        <h1>Communication Round</h1>
+      </div>
+    </div>
+    <div class="topbar-right">
+      <button class="link-btn" id="historyBtn">History</button>
+      <div class="pill">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 15a3 3 0 0 0 3-3V6a3 3 0 0 0-6 0v6a3 3 0 0 0 3 3z"/></svg>
+        <span>Attempts: <b class="mono">${state.attempts.length}</b></span>
+      </div>
+    </div>
+  </div>`);
+  bar.querySelector('#brandHome').onclick = ()=>{ state.screen='dashboard'; render(); };
+  bar.querySelector('#historyBtn').onclick = ()=>{ state.screen='history'; render(); };
+  return bar;
+}
+
+/* ============================= KEY MISSING (dev-only screen) ============================= */
+function renderKeyMissing(){
+  const wrap = el(`<div class="setup-wrap"><div class="card setup-card">
+    <div class="stamp"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15a3 3 0 0 0 3-3V6a3 3 0 0 0-6 0v6a3 3 0 0 0 3 3z"/><path d="M19 11v1a7 7 0 0 1-14 0v-1M12 19v3"/></svg></div>
+    <h2>One-time setup needed</h2>
+    <p>This screen only appears because no <b>config.js</b> file with a Gemini API key was found next to this HTML file. Once it's added, users of this app will go straight to the practice hub &mdash; no key input, ever.</p>
+    <div class="instruction-box" style="margin-bottom:14px;">
+      In the same folder as this file, create <b>config.js</b> (copy <b>config.example.js</b> if present) with:<br><br>
+      <span class="mono">window.APP_CONFIG = {<br>&nbsp;&nbsp;GEMINI_API_KEY: "your-real-key-here",<br>&nbsp;&nbsp;DEEPGRAM_API_KEY: "your-real-key-here"<br>};</span><br><br>
+      Get a Gemini key free at <b>aistudio.google.com/apikey</b> and a Deepgram key free at <b>console.deepgram.com</b>. Save the file and reload this page.
+    </div>
+    <div class="key-note">config.js keeps your real keys out of this HTML file entirely, so if you commit this project to git/GitHub, add <span class="mono">config.js</span> to your .gitignore &mdash; only config.example.js (with placeholder values) should ever be committed.</div>
+  </div></div>`);
+  return wrap;
+}
+
+/* ============================= DASHBOARD ============================= */
+function renderDashboard(){
+  const scores = state.attempts.map(a=>a.score.overall);
+  const avgScore = scores.length ? avg(scores).toFixed(1) : '—';
+  const best = scores.length ? Math.max(...scores) : '—';
+  const wrap = el(`<div>
+    <div class="section-head">
+      <span class="eyebrow">Practice Hub</span>
+      <h2>Choose a round to practise</h2>
+      <p>Each round mirrors a real assessment section. Pick one, speak within the time limit, and get scored feedback right after.</p>
+    </div>
+    <div class="stats-row">
+      <div class="card stat-card"><div class="label">Attempts</div><div class="value">${state.attempts.length}</div></div>
+      <div class="card stat-card"><div class="label">Average Score</div><div class="value accent">${avgScore}${scores.length?'/10':''}</div></div>
+      <div class="card stat-card"><div class="label">Best Score</div><div class="value">${best}${scores.length?'/10':''}</div></div>
+      <div class="card stat-card"><div class="label">Rounds Covered</div><div class="value">${new Set(state.attempts.map(a=>a.catKey)).size}/5</div></div>
+    </div>
+    <div class="cat-grid" id="catGrid"></div>
+    <div class="card history-card">
+      <div class="section-head" style="margin-bottom:12px;">
+        <h2 style="font-size:18px;">Recent attempts</h2>
+      </div>
+      <div id="recentList"></div>
+    </div>
+  </div>`);
+
+  const grid = wrap.querySelector('#catGrid');
+  Object.values(CATEGORIES).forEach(cat=>{
+    const card = el(`<div class="card cat-card" data-cat="${cat.key}">
+      <div class="cat-top">
+        <div class="cat-icon" style="background:${cat.bg};color:${cat.color};">${cat.icon.replace('stroke-width="1.8"', `stroke="${cat.color}" stroke-width="1.8"`)}</div>
+      </div>
+      <h3>${cat.label}</h3>
+      <p>${cat.desc}</p>
+      <div class="cat-meta">
+        <span>${cat.duration}s per response</span>
+        <span>${cat.questions.length} prompts</span>
+      </div>
+    </div>`);
+    card.onclick = ()=> startCategory(cat.key);
+    grid.appendChild(card);
+  });
+
+  const recentWrap = wrap.querySelector('#recentList');
+  const recent = [...state.attempts].reverse().slice(0,5);
+  if(recent.length===0){
+    recentWrap.appendChild(el(`<div class="empty-state">No attempts yet. Pick a round above to get started.</div>`));
+  } else {
+    recent.forEach(a=>{
+      const cat = CATEGORIES[a.catKey];
+      const row = el(`<div class="history-row">
+        <div class="history-left">
+          <div class="history-badge" style="background:${scoreSoft(a.score.overall)};color:${scoreColor(a.score.overall)};">${a.score.overall}</div>
+          <div>
+            <div class="history-title">${a.question.length>60?a.question.slice(0,60)+'…':a.question}</div>
+            <div class="history-sub">${cat.label} &middot; ${new Date(a.ts).toLocaleString([], {month:'short', day:'numeric', hour:'2-digit', minute:'2-digit'})}</div>
+          </div>
+        </div>
+      </div>`);
+      recentWrap.appendChild(row);
+    });
+  }
+  return wrap;
+}
+
+/* ============================= START TEST ============================= */
+function startCategory(catKey, qIndex){
+  const cat = CATEGORIES[catKey];
+  const idx = (typeof qIndex === 'number') ? qIndex : Math.floor(Math.random()*cat.questions.length);
+  state.currentCat = catKey;
+  state.currentQIndex = idx;
+  state.currentQ = cat.questions[idx];
+  state.duration = cat.duration;
+  state.timeLeft = cat.duration;
+  state.transcript = '';
+  state.audioURL = null;
+  state.isRecording = false;
+  state.loadError = '';
+  state.screen = 'test';
+  render();
+}
+
+/* ============================= TEST SCREEN ============================= */
+function renderTest(){
+  const cat = CATEGORIES[state.currentCat];
+  const isPicture = cat.key === 'picture';
+  const isReading = cat.key === 'reading';
+  const qObj = state.currentQ;
+  const promptText = isPicture ? qObj.prompt : qObj;
+
+  const wrap = el(`<div>
+    <div class="section-head">
+      <span class="eyebrow">${cat.short}</span>
+      <h2>Round in progress</h2>
+      <p>Read the prompt, then start when you're ready. Recording stops automatically at ${cat.duration}s.</p>
+    </div>
+    <div class="test-grid">
+      <div class="card question-panel">
+        <span class="cat-tag" style="background:${cat.bg};color:${cat.color};">${cat.label}</span>
+        <p class="prompt-text">${promptText}</p>
+        ${isPicture ? `<div style="border-radius:10px;overflow:hidden;border:1px solid var(--border);">${SVG_SCENES[qObj.svg]}</div>` : ''}
+        ${isReading ? '' : `<div class="instruction-box">Speak naturally, as if answering in person. Filler words and pauses are okay &mdash; focus on structure and clarity.</div>`}
+        ${!window.isSecureContext ? `<div class="error-box" style="margin-top:14px;">This page isn't running on HTTPS or localhost, so the browser may block the microphone and live transcription. If recording fails, host this file (e.g. on Netlify) or open it via a local server instead of double-clicking it.</div>` : ''}
+        <div class="transcript-box">
+          <div class="label">Transcript ${state.speechSupported ? '(fills in live — you can edit it after recording)' : '(your browser has no live speech-to-text — type what you said after recording)'}</div>
+          <textarea id="transcriptArea" class="transcript-live" readonly placeholder="Your words will appear here as you speak…" style="width:100%;font-family:'IBM Plex Sans',sans-serif;"></textarea>
+        </div>
+      </div>
+      <div class="card control-panel">
+        <div class="timer-wrap">
+          <svg viewBox="0 0 180 180">
+            <circle class="timer-track" cx="90" cy="90" r="80"></circle>
+            <circle class="timer-progress" id="timerRing" cx="90" cy="90" r="80" stroke="${cat.color}"></circle>
+          </svg>
+          <div class="timer-center">
+            <span class="t mono" id="timerText">${fmtTime(cat.duration)}</span>
+            <span class="lbl">remaining</span>
+          </div>
+        </div>
+        <button class="mic-btn" id="micBtn">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15a3 3 0 0 0 3-3V6a3 3 0 0 0-6 0v6a3 3 0 0 0 3 3z"/><path d="M19 11v1a7 7 0 0 1-14 0v-1M12 19v3"/></svg>
+        </button>
+        <div class="status-text" id="statusText">Tap the mic to begin your ${cat.duration}-second response.</div>
+        <div class="wave-row" id="waveRow" style="display:none;">
+          ${[0,1,2,3,4,5].map(i=>`<div class="bar" style="animation-delay:${i*0.1}s;"></div>`).join('')}
+        </div>
+        <button class="btn btn-primary btn-block" id="submitBtn" style="display:none;">Submit for scoring &rarr;</button>
+        <button class="btn btn-ghost btn-sm" id="backBtn">&larr; Choose a different round</button>
+        ${DEEPGRAM_READY ? `<div id="dgDebugWrap" style="width:100%;">
+          <button class="link-btn" id="dgDebugToggle" style="font-size:11px;padding:2px;">Show transcription debug log</button>
+          <div id="dgDebug" class="mono" style="display:none;font-size:10.5px;line-height:1.5;color:var(--ink-faint);white-space:pre-wrap;max-height:140px;overflow-y:auto;background:var(--surface-alt);border:1px solid var(--border);border-radius:8px;padding:8px 10px;margin-top:6px;"></div>
+        </div>` : ''}
+      </div>
+    </div>
+  </div>`);
+
+  wrap.querySelector('#backBtn').onclick = ()=>{ stopEverything(); state.screen='dashboard'; render(); };
+  const dgToggle = wrap.querySelector('#dgDebugToggle');
+  if(dgToggle){
+    dgToggle.onclick = ()=>{
+      const box = wrap.querySelector('#dgDebug');
+      const showing = box.style.display !== 'none';
+      box.style.display = showing ? 'none' : 'block';
+      dgToggle.textContent = showing ? 'Show transcription debug log' : 'Hide transcription debug log';
+    };
+  }
+  wrap.querySelector('#micBtn').onclick = ()=> beginReadyCountdown(wrap);
+  wrap.querySelector('#submitBtn').onclick = ()=>{
+    const ta = wrap.querySelector('#transcriptArea');
+    state.transcript = ta.value.trim();
+    submitForScoring();
+  };
+  return wrap;
+}
+
+/* ---------- ready countdown -> recording ---------- */
+function beginReadyCountdown(wrap){
+  const micBtn = wrap.querySelector('#micBtn');
+  if(micBtn.disabled) return;
+  micBtn.disabled = true;
+  let n = 3;
+  const overlay = el(`<div class="ready-overlay"><div class="num mono">${n}</div><div class="lbl">Get ready to speak</div></div>`);
+  document.body.appendChild(overlay);
+  const iv = setInterval(()=>{
+    n--;
+    if(n>0){ overlay.querySelector('.num').textContent = n; }
+    else{
+      clearInterval(iv);
+      overlay.remove();
+      startRecording(wrap);
+    }
+  },1000);
+}
+
+async function startRecording(wrap){
+  const statusText = wrap.querySelector('#statusText');
+  let stream;
+  try{
+    stream = await navigator.mediaDevices.getUserMedia({audio:true});
+  }catch(err){
+    statusText.textContent = 'Microphone access was blocked. Please allow mic permissions and try again.';
+    wrap.querySelector('#micBtn').disabled = false;
+    return;
+  }
+
+  const dgDebugEl = wrap.querySelector('#dgDebug');
+  function dgLog(msg){
+    const line = `[${new Date().toLocaleTimeString()}] ${msg}`;
+    console.log('[Deepgram]', msg);
+    if(dgDebugEl){ dgDebugEl.textContent += (dgDebugEl.textContent ? '\n' : '') + line; dgDebugEl.scrollTop = dgDebugEl.scrollHeight; }
+  }
+
+  const mimeType = MediaRecorder.isTypeSupported('audio/webm;codecs=opus') ? 'audio/webm;codecs=opus' : (MediaRecorder.isTypeSupported('audio/webm') ? 'audio/webm' : '');
+  if(DEEPGRAM_READY) dgLog(`Chosen recording mimeType: "${mimeType || '(none supported — likely Safari)'}"`);
+  const mr = new MediaRecorder(stream, mimeType ? {mimeType} : undefined);
+  const chunks = [];
+  mr.ondataavailable = e => { if(e.data && e.data.size>0) chunks.push(e.data); };
+  mr.onstop = () => {
+    const blob = new Blob(chunks, {type: mimeType || 'audio/webm'});
+    state.audioURL = URL.createObjectURL(blob);
+    stream.getTracks().forEach(t=>t.stop());
+  };
+  state.mediaRecorder = mr;
+
+  const liveBox = wrap.querySelector('#transcriptArea');
+  const statusTextEl = wrap.querySelector('#statusText');
+
+  if(DEEPGRAM_READY && !mimeType){
+    // Safari (and some older browsers) can't produce webm/opus at all, which is
+    // what the Deepgram wiring below assumes. Rather than fail silently, say so.
+    dgLog('No webm mimeType supported by this browser — skipping Deepgram, it needs webm/opus. Try Chrome, Edge, or Firefox for live transcription.');
+    if(statusTextEl) statusTextEl.textContent = 'This browser can\'t record in a format Deepgram accepts (likely Safari). Try Chrome/Edge/Firefox for live transcription, or type your response after recording.';
+  } else if(DEEPGRAM_READY){
+    startDeepgramTranscription(mr, liveBox, statusTextEl, mimeType, dgLog);
+  } else if(SPEECH_RECOGNITION_CTOR){
+    startWebSpeechTranscription(liveBox, statusTextEl);
+  } else if(statusTextEl){
+    statusTextEl.textContent = 'No live transcription available in this browser. Type your response below after recording.';
+  }
+
+  mr.start(250); // emit chunks every 250ms so Deepgram gets a steady stream
+  if(liveBox) liveBox.readOnly = false;
+
+  state.isRecording = true;
+  state.timeLeft = state.duration;
+  const micBtn = wrap.querySelector('#micBtn');
+  micBtn.classList.add('recording');
+  micBtn.disabled = false;
+  micBtn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="#F5F1E7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="6" width="12" height="12" rx="2"/></svg>`;
+  micBtn.onclick = () => finishRecording(wrap, true);
+  statusText.textContent = 'Recording… tap the square to stop early.';
+  wrap.querySelector('#waveRow').style.display = 'flex';
+
+  const ring = wrap.querySelector('#timerRing');
+  const circumference = 2 * Math.PI * 80;
+  ring.style.strokeDasharray = circumference;
+  const timerText = wrap.querySelector('#timerText');
+
+  state.timerInterval = setInterval(()=>{
+    state.timeLeft--;
+    if(timerText) timerText.textContent = fmtTime(Math.max(0,state.timeLeft));
+    const frac = state.timeLeft / state.duration;
+    if(ring) ring.style.strokeDashoffset = circumference * (1-frac);
+    if(state.timeLeft <= 10 && ring) ring.style.stroke = 'var(--warn)';
+    if(state.timeLeft <= 0){ finishRecording(wrap, false); }
+  },1000);
+}
+
+/* ---------- Deepgram live transcription ---------- */
+function startDeepgramTranscription(mediaRecorder, liveBox, statusTextEl, mimeType, dgLog){
+  dgLog = dgLog || function(){};
+  state.deepgramFinalTranscript = '';
+  state.deepgramInterimTranscript = '';
+
+  const isOpus = mimeType.indexOf('opus') !== -1;
+  const params = new URLSearchParams({
+    model: 'nova-2',
+    language: 'en',
+    smart_format: 'true',
+    interim_results: 'true',
+    punctuate: 'true',
+    endpointing: '300'
+  });
+  if(mimeType.indexOf('webm') !== -1) params.set('container', 'webm');
+  if(isOpus){
+    // Chrome/Edge/Firefox's Opus encoder for getUserMedia audio is 48kHz mono.
+    // Being explicit here avoids Deepgram guessing wrong and rejecting the stream.
+    params.set('encoding', 'opus');
+    params.set('sample_rate', '48000');
+    params.set('channels', '1');
+  }
+
+  const url = `wss://api.deepgram.com/v1/listen?${params.toString()}`;
+  dgLog(`Connecting to Deepgram with params: ${params.toString()}`);
+  // Browsers can't set custom headers on WebSocket connections, so the API key
+  // is passed via the Sec-WebSocket-Protocol mechanism Deepgram supports.
+  let socket;
+  try{
+    socket = new WebSocket(url, ['token', DEEPGRAM_API_KEY]);
+  }catch(e){
+    dgLog('Socket construction threw: ' + e.message);
+    if(statusTextEl) statusTextEl.textContent = 'Could not connect to Deepgram. Type your response below after recording.';
+    return;
+  }
+  state.deepgramSocket = socket;
+
+  let socketOpen = false;
+  let gotAnyMessage = false;
+  let chunkCount = 0;
+  const pendingChunks = [];
+
+  // IMPORTANT: attach the chunk listener immediately, not inside onopen.
+  // MediaRecorder fires its first dataavailable event (which carries the
+  // WebM header — everything after is undecodable without it) almost right
+  // away, often before the WebSocket finishes its handshake. If we only
+  // start listening once the socket is open, that first header chunk gets
+  // silently dropped and Deepgram can never decode anything that follows.
+  // So: buffer chunks until the socket is open, then flush + go direct.
+  mediaRecorder.addEventListener('dataavailable', function onData(e){
+    if(!e.data || e.data.size === 0) return;
+    chunkCount++;
+    if(socketOpen && socket.readyState === WebSocket.OPEN){
+      socket.send(e.data);
+    } else {
+      pendingChunks.push(e.data);
+    }
+    if(chunkCount === 1) dgLog(`First audio chunk captured (${e.data.size} bytes).`);
+  });
+
+  socket.onopen = () => {
+    socketOpen = true;
+    dgLog(`Socket open. Flushing ${pendingChunks.length} buffered chunk(s).`);
+    pendingChunks.forEach(chunk => socket.send(chunk));
+    pendingChunks.length = 0;
+  };
+
+  socket.onmessage = (msg) => {
+    try{
+      const data = JSON.parse(msg.data);
+      gotAnyMessage = true;
+      if(data.type === 'Error'){
+        dgLog('Deepgram returned an ERROR frame: ' + JSON.stringify(data));
+        if(statusTextEl) statusTextEl.textContent = 'Deepgram rejected the audio stream — see debug log below. Type your response manually for now.';
+        return;
+      }
+      if(data.type !== 'Results') return;
+      const alt = data.channel && data.channel.alternatives && data.channel.alternatives[0];
+      const text = alt ? alt.transcript : '';
+      if(!text) return;
+      if(data.is_final){
+        state.deepgramFinalTranscript += text + ' ';
+        state.deepgramInterimTranscript = '';
+      } else {
+        state.deepgramInterimTranscript = text;
+      }
+      state.transcript = (state.deepgramFinalTranscript + state.deepgramInterimTranscript).trim();
+      dgLog(`Transcript update (${data.is_final ? 'final' : 'interim'}): "${text}"`);
+      if(liveBox){
+        liveBox.value = state.transcript;
+        liveBox.classList.add('filled');
+        liveBox.scrollTop = liveBox.scrollHeight;
+      }
+    }catch(e){ dgLog('Failed to parse message: ' + e.message); }
+  };
+
+  socket.onerror = (e) => {
+    dgLog('Socket error event fired (browsers give no detail on WS error events).');
+    if(statusTextEl) statusTextEl.textContent = 'Live transcription connection had an issue — recording continues. Edit the transcript manually if needed.';
+  };
+
+  socket.onclose = (ev) => {
+    dgLog(`Socket closed. code=${ev.code} reason="${ev.reason || '(none given by server)'}" gotAnyMessage=${gotAnyMessage} chunksCaptured=${chunkCount}`);
+    if(ev.code !== 1000 && state.isRecording && statusTextEl){
+      // Browsers hide the real HTTP status of a rejected WS handshake, so an
+      // immediate close with no messages received almost always means a bad
+      // or inactive API key rather than a network blip.
+      if(!gotAnyMessage){
+        statusTextEl.textContent = 'Deepgram closed the connection immediately without responding — almost always an invalid/inactive API key or no account credit. Check console.deepgram.com. Type your response below for now.';
+      } else {
+        statusTextEl.textContent = 'Live transcription disconnected — recording continues. Type/edit your response below.';
+      }
+    }
+  };
+}
+
+/* ---------- Web Speech API fallback (used only if Deepgram key isn't set) ---------- */
+function startWebSpeechTranscription(liveBox, statusTextEl){
+  const SR = SPEECH_RECOGNITION_CTOR;
+  const rec = new SR();
+  rec.continuous = true;
+  rec.interimResults = true;
+  rec.lang = 'en-US';
+  let finalTranscript = '';
+  let recognitionFatalError = '';
+  rec.onresult = (e)=>{
+    let interim = '';
+    for(let i=e.resultIndex;i<e.results.length;i++){
+      const t = e.results[i][0].transcript;
+      if(e.results[i].isFinal) finalTranscript += t + ' ';
+      else interim += t;
+    }
+    state.transcript = (finalTranscript + interim).trim();
+    if(liveBox){ liveBox.value = state.transcript; liveBox.classList.add('filled'); liveBox.scrollTop = liveBox.scrollHeight; }
+  };
+  rec.onerror = (e)=>{
+    if(e.error === 'not-allowed' || e.error === 'service-not-allowed'){
+      recognitionFatalError = 'Microphone access for speech-to-text was blocked. Recording will continue — type your response below manually.';
+      if(statusTextEl) statusTextEl.textContent = recognitionFatalError;
+    } else if(e.error === 'network'){
+      recognitionFatalError = 'Live transcription lost its network connection. Recording continues — type your response below manually if it doesn\'t recover.';
+      if(statusTextEl) statusTextEl.textContent = recognitionFatalError;
+    }
+  };
+  rec.onend = ()=>{ if(state.isRecording && !recognitionFatalError){ try{ rec.start(); }catch(e){} } };
+  state.recognition = rec;
+  try{ rec.start(); }catch(e){
+    state.speechSupported = false;
+    if(statusTextEl) statusTextEl.textContent = 'Live transcription could not start. Type your response below after recording.';
+  }
+}
+
+function finishRecording(wrap, manual){
+  if(!state.isRecording) return;
+  state.isRecording = false;
+  clearInterval(state.timerInterval);
+  if(state.mediaRecorder && state.mediaRecorder.state !== 'inactive') state.mediaRecorder.stop();
+  if(state.recognition){ try{ state.recognition.stop(); }catch(e){} }
+  if(state.deepgramSocket){
+    try{
+      if(state.deepgramSocket.readyState === WebSocket.OPEN){
+        state.deepgramSocket.send(JSON.stringify({type:'CloseStream'}));
+      }
+      state.deepgramSocket.close(1000);
+    }catch(e){}
+    state.deepgramSocket = null;
+  }
+  const statusText = wrap.querySelector('#statusText');
+  const micBtn = wrap.querySelector('#micBtn');
+  if(micBtn){ micBtn.classList.remove('recording'); micBtn.disabled = true; micBtn.style.display = 'none'; }
+  if(statusText) statusText.textContent = 'Recording stopped. Review or fix the transcript below, then submit.';
+  const waveRow = wrap.querySelector('#waveRow');
+  if(waveRow) waveRow.style.display = 'none';
+  const transcriptArea = wrap.querySelector('#transcriptArea');
+  if(transcriptArea){
+    transcriptArea.readOnly = false;
+    transcriptArea.classList.add('filled');
+    if(!transcriptArea.value.trim()){
+      transcriptArea.placeholder = 'No speech was picked up automatically. Type roughly what you said here before submitting.';
+      transcriptArea.focus();
+    }
+  }
+  const submitBtn = wrap.querySelector('#submitBtn');
+  if(submitBtn) submitBtn.style.display = 'inline-flex';
+}
+
+function stopEverything(){
+  clearInterval(state.timerInterval);
+  if(state.mediaRecorder && state.mediaRecorder.state !== 'inactive'){ try{ state.mediaRecorder.stop(); }catch(e){} }
+  if(state.recognition){ try{ state.recognition.stop(); }catch(e){} }
+  if(state.deepgramSocket){ try{ state.deepgramSocket.close(1000); }catch(e){} state.deepgramSocket = null; }
+  state.isRecording = false;
+}
+
+/* ============================= LOADING ============================= */
+function renderLoading(){
+  return el(`<div class="loading-wrap">
+    <div class="spinner"></div>
+    <p>Scoring your response with Gemini…</p>
+  </div>`);
+}
+
+/* ============================= GEMINI SCORING ============================= */
+async function submitForScoring(){
+  state.screen = 'loading';
+  render();
+
+  const cat = CATEGORIES[state.currentCat];
+  const questionText = cat.key === 'picture' ? state.currentQ.prompt : state.currentQ;
+  const transcript = state.transcript && state.transcript.trim() ? state.transcript.trim() : '(No speech was captured. Score fluency and confidence as low, and mention that no audio/transcript was detected.)';
+
+  const roundContext = {
+    jam: "This is a JAM (Just A Minute) round testing spontaneous fluency, coherence and structure.",
+    picture: "This is a picture description round testing observation, vocabulary and descriptive structure.",
+    situation: "This is a workplace situation-response round testing tone, professionalism and clarity in a spoken reply.",
+    reading: "This is a reading-aloud round testing pacing, clarity and accuracy against the original passage.",
+    story: "This is a story-building round testing creativity, coherence and natural use of the given words."
+  }[cat.key];
+
+  let extra = '';
+  if(cat.key === 'reading'){
+    extra = `\n\nOriginal passage the candidate was asked to read aloud:\n"""${questionText}"""\n\nCompare the transcript to this passage. Note major omissions, mispronounced-looking words (words that seem phonetically substituted), or added filler, and factor this into fluency and content scores.`;
+  }
+  if(cat.key === 'story'){
+    extra = `\n\nCheck whether the transcript naturally incorporates all the required words listed in the prompt.`;
+  }
+
+  const sys = `You are a strict but supportive communication-skills evaluator for a corporate assessment (similar to Cognizant's communication/verbal round), evaluating non-native English speakers. ${roundContext}
+
+Score the candidate's SPOKEN response (given below as a transcript) on a scale of 0-10 for each dimension. Be honest and specific, not generic. Base scores only on the transcript content, structure, vocabulary and relevance — assume pronunciation cannot be directly heard, but infer fluency/pace from filler words, run-ons, and sentence flow in the transcript.
+
+Respond with ONLY valid JSON, no markdown fences, no extra commentary, in exactly this shape:
+{
+  "overall": <number 0-10, one decimal allowed>,
+  "fluency": <number 0-10>,
+  "grammar": <number 0-10>,
+  "vocabulary": <number 0-10>,
+  "content": <number 0-10>,
+  "confidence": <number 0-10>,
+  "strengths": ["short specific point", "short specific point"],
+  "improvements": ["short specific actionable point", "short specific actionable point"],
+  "model_answer": "A concise 2-3 sentence example of a strong spoken answer to this exact prompt, written the way a confident candidate would actually speak it."
+}`;
+
+  const userMsg = `Prompt given to candidate: "${questionText}"${extra}\n\nCandidate's transcript:\n"""${transcript}"""`;
+
+  try{
+    const resp = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=${encodeURIComponent(state.apiKey)}`, {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({
+        contents:[{ role:'user', parts:[{text: sys + '\n\n' + userMsg}] }],
+        generationConfig:{ temperature:0.4 }
+      })
+    });
+    if(!resp.ok){
+      const errBody = await resp.text();
+      throw new Error(`Gemini API error (${resp.status}): ${errBody.slice(0,200)}`);
+    }
+    const data = await resp.json();
+    let text = data.candidates?.[0]?.content?.parts?.map(p=>p.text||'').join('') || '';
+    text = text.replace(/```json/gi,'').replace(/```/g,'').trim();
+    const scoreObj = JSON.parse(text);
+
+    const attempt = {
+      id: Date.now(),
+      catKey: cat.key,
+      question: questionText,
+      transcript,
+      score: scoreObj,
+      audioURL: state.audioURL,
+      ts: Date.now()
+    };
+    state.attempts.push(attempt);
+    state.lastResult = attempt;
+    state.screen = 'results';
+    render();
+  }catch(err){
+    state.loadError = err.message || 'Something went wrong while scoring your response.';
+    state.screen = 'test-error';
+    renderTestError();
+  }
+}
+
+function renderTestError(){
+  const app = document.getElementById('app');
+  app.innerHTML = '';
+  app.appendChild(renderTopbar());
+  const wrap = el(`<div class="card" style="padding:32px;max-width:560px;margin:40px auto;text-align:center;">
+    <h2 style="margin:0 0 10px;">Couldn't score that response</h2>
+    <div class="error-box">${state.loadError}</div>
+    <div style="display:flex;gap:10px;justify-content:center;margin-top:20px;">
+      <button class="btn btn-ghost" id="retryBtn">Try again</button>
+      <button class="btn btn-primary" id="backDashBtn">Back to hub</button>
+    </div>
+  </div>`);
+  wrap.querySelector('#retryBtn').onclick = () => submitForScoring();
+  wrap.querySelector('#backDashBtn').onclick = () => { state.screen='dashboard'; render(); };
+  app.appendChild(wrap);
+}
+
+/* ============================= RESULTS ============================= */
+function renderResults(){
+  const a = state.lastResult;
+  const cat = CATEGORIES[a.catKey];
+  const s = a.score;
+  const dims = [
+    {label:'Fluency', val:s.fluency},
+    {label:'Grammar', val:s.grammar},
+    {label:'Vocabulary', val:s.vocabulary},
+    {label:'Content Relevance', val:s.content},
+    {label:'Confidence', val:s.confidence}
+  ];
+  const overallColor = scoreColor(s.overall);
+  const wrap = el(`<div>
+    <div class="section-head">
+      <span class="eyebrow">${cat.label} &middot; Result</span>
+      <h2>Here's how you did</h2>
+      <p>${a.question.length>110?a.question.slice(0,110)+'…':a.question}</p>
+    </div>
+    <div class="results-grid">
+      <div class="card score-card">
+        <span class="score-tag" style="background:${scoreSoft(s.overall)};color:${overallColor};">Overall Score</span>
+        <div class="score-stamp" style="border-color:${overallColor};">
+          <span class="num" style="color:${overallColor};">${s.overall}</span>
+          <span class="den">out of 10</span>
+        </div>
+        ${a.audioURL ? `<audio controls src="${a.audioURL}" style="width:100%;margin-bottom:14px;"></audio>` : ''}
+        <div class="breakdown">
+          ${dims.map(d=>`
+            <div class="breakdown-row">
+              <div class="brow-top"><span>${d.label}</span><span>${d.val}/10</span></div>
+              <div class="bar-track"><div class="bar-fill" style="width:${d.val*10}%;background:${scoreColor(d.val)};"></div></div>
+            </div>`).join('')}
+        </div>
+      </div>
+      <div>
+        <div class="card feedback-card" style="margin-bottom:16px;">
+          <h3>What went well</h3>
+          <div class="fsub">Keep doing these</div>
+          <ul class="feedback-list">
+            ${(s.strengths||[]).map(t=>`<li><span class="dot" style="background:var(--success);"></span>${t}</li>`).join('') || '<li>No specific strengths returned.</li>'}
+          </ul>
+          <h3>Where to improve</h3>
+          <div class="fsub">Focus on these next attempt</div>
+          <ul class="feedback-list">
+            ${(s.improvements||[]).map(t=>`<li><span class="dot" style="background:var(--warn);"></span>${t}</li>`).join('') || '<li>No specific improvements returned.</li>'}
+          </ul>
+          ${s.model_answer ? `<div class="divider-label">Model answer</div><div class="model-answer">${s.model_answer}</div>` : ''}
+        </div>
+        <div class="card" style="padding:20px 24px;">
+          <div class="divider-label" style="margin-top:0;">Your transcript</div>
+          <div style="font-size:13.5px;line-height:1.6;color:var(--ink-soft);">${a.transcript}</div>
+        </div>
+      </div>
+    </div>
+    <div class="results-actions">
+      <button class="btn btn-primary" id="tryAgainBtn">Try another prompt in this round</button>
+      <button class="btn btn-ghost" id="switchRoundBtn">Choose a different round</button>
+      <button class="btn btn-ghost" id="dashBtn2">Back to hub</button>
+    </div>
+  </div>`);
+  wrap.querySelector('#tryAgainBtn').onclick = ()=>{
+    const cat2 = CATEGORIES[a.catKey];
+    let nextIdx = Math.floor(Math.random()*cat2.questions.length);
+    startCategory(a.catKey, nextIdx);
+  };
+  wrap.querySelector('#switchRoundBtn').onclick = ()=>{ state.screen='dashboard'; render(); };
+  wrap.querySelector('#dashBtn2').onclick = ()=>{ state.screen='dashboard'; render(); };
+  return wrap;
+}
+
+/* ============================= HISTORY ============================= */
+function renderHistory(){
+  const wrap = el(`<div>
+    <div class="section-head">
+      <span class="eyebrow">Session Log</span>
+      <h2>Your practice history</h2>
+      <p>Everything you've attempted in this browser tab. This resets when you close the tab &mdash; export it below to keep a copy.</p>
+    </div>
+    <div class="card history-card" id="histCard"></div>
+    ${state.attempts.length ? `<button class="btn btn-ghost btn-sm" id="exportBtn" style="margin-top:16px;">Download session report (.txt)</button>` : ''}
+  </div>`);
+  const listWrap = wrap.querySelector('#histCard');
+  if(state.attempts.length===0){
+    listWrap.appendChild(el(`<div class="empty-state">Nothing here yet. Complete a round from the practice hub.</div>`));
+  } else {
+    [...state.attempts].reverse().forEach(a=>{
+      const cat = CATEGORIES[a.catKey];
+      const row = el(`<div class="history-row">
+        <div class="history-left">
+          <div class="history-badge" style="background:${scoreSoft(a.score.overall)};color:${scoreColor(a.score.overall)};">${a.score.overall}</div>
+          <div>
+            <div class="history-title">${a.question.length>70?a.question.slice(0,70)+'…':a.question}</div>
+            <div class="history-sub">${cat.label} &middot; ${new Date(a.ts).toLocaleString([], {month:'short', day:'numeric', hour:'2-digit', minute:'2-digit'})}</div>
+          </div>
+        </div>
+        <button class="btn btn-ghost btn-sm" data-id="${a.id}">View</button>
+      </div>`);
+      row.querySelector('button').onclick = ()=>{ state.lastResult = a; state.screen='results'; render(); };
+      listWrap.appendChild(row);
+    });
+  }
+  const exportBtn = wrap.querySelector('#exportBtn');
+  if(exportBtn){
+    exportBtn.onclick = ()=>{
+      let out = 'COMMUNICATION ROUND PRACTICE — SESSION REPORT\n' + new Date().toString() + '\n\n';
+      state.attempts.forEach((a,i)=>{
+        const cat = CATEGORIES[a.catKey];
+        out += `#${i+1} [${cat.label}] Score: ${a.score.overall}/10\n`;
+        out += `Prompt: ${a.question}\n`;
+        out += `Transcript: ${a.transcript}\n`;
+        out += `Fluency ${a.score.fluency} | Grammar ${a.score.grammar} | Vocabulary ${a.score.vocabulary} | Content ${a.score.content} | Confidence ${a.score.confidence}\n`;
+        out += `Strengths: ${(a.score.strengths||[]).join('; ')}\n`;
+        out += `Improve: ${(a.score.improvements||[]).join('; ')}\n\n`;
+      });
+      const blob = new Blob([out], {type:'text/plain'});
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url; link.download = 'communication-round-report.txt';
+      link.click();
+      URL.revokeObjectURL(url);
+    };
+  }
+  return wrap;
+}
+
+/* ============================= INIT ============================= */
+render();
+</script>
+</body>
+</html>
